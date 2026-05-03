@@ -1,28 +1,58 @@
-# 🚀 Serverless Vector Pipeline (Open Source)
+🚀 Serverless Vector Pipeline & RAG Chatbot (Open Source)
+Este proyecto implementa una solución integral de Retrieval-Augmented Generation (RAG). Permite convertir documentos no estructurados (PDFs) en vectores de alta dimensionalidad y consultarlos mediante un Chatbot inteligente con respuesta en milisegundos.
 
-Este proyecto implementa un pipeline de datos para convertir documentos no estructurados (PDFs) en vectores de alta dimensionalidad, almacenándolos en una base de datos vectorial para búsqueda semántica.
+Enfoque: Freelance / Cost-Zero. Arquitectura diseñada para ejecutarse íntegramente en capas gratuitas (Free-Tiers) de servicios Cloud de alto rendimiento.
 
-**Enfoque:** Freelance / Cost-Zero (Totalmente gratuito usando capas Open Source y Cloud Free-Tiers).
+🛠️ Arquitectura del Sistema
+El proyecto se divide en dos componentes críticos:
 
-## 🛠️ Arquitectura
-- **Lenguaje:** Python 3.10
-- **Orquestación:** GitHub Actions (CI/CD Pipeline)
-- **Embeddings:** Hugging Face (`all-MiniLM-L6-v2`) - *Local & Free*
-- **Vector Database:** Pinecone (Serverless Tier)
-- **Framework:** LangChain
+1. Data Ingestion Pipeline (ETL)
+Orquestación: GitHub Actions (CI/CD Pipeline).
 
-## 📦 Instalación Local
-1. Clonar el repositorio.
-2. Crear entorno virtual: `python -m venv venv`.
-3. Activar: `source venv/bin/activate` (o `.\venv\Scripts\activate` en Windows).
-4. Instalar: `pip install -r requirements.txt`.
+Procesamiento: Python 3.10+ con LangChain.
 
-## ☁️ Despliegue en la Nube
-El pipeline está configurado para ejecutarse automáticamente mediante **GitHub Actions** cada vez que se detecta un nuevo archivo en la carpeta `/data`.
+Embeddings: Hugging Face (all-MiniLM-L6-v2) operando de forma local/serverless.
 
-### Requisitos para la Nube:
-Configurar en los **Secrets** de GitHub:
-- `PINECONE_API_KEY`: Tu llave de Pinecone.
+Vector Database: Pinecone (Serverless Tier).
 
-## 📄 Licencia
+2. RAG Chatbot (Interface)
+Framework: Streamlit para una interfaz web ligera.
+
+Inferencia LLM: Groq LPU (modelo llama-3.1-8b-instant), garantizando respuestas casi instantáneas.
+
+Lógica de Cadena: LangChain Expression Language (LCEL) para máxima estabilidad y modularidad.
+
+📦 Instalación Local
+Clonar el repositorio:
+
+Bash
+git clone 
+cd nombre-repo
+Entorno Virtual:
+
+Bash
+python -m venv venv
+# Activar en Windows:
+.\venv\Scripts\activate
+# Activar en Unix/macOS:
+source venv/bin/activate
+Instalar Dependencias:
+
+Bash
+pip install -r requirements.txt
+Configurar Variables de Entorno:
+Crea un archivo .env en la raíz con:
+
+Fragmento de código
+GROQ_API_KEY=tu_api_key
+PINECONE_API_KEY=tu_api_key
+PINECONE_INDEX_NAME=tu_nombre_de_indice
+🚀 Uso
+Para Ingestar Datos: Simplemente sube tus archivos .pdf a la carpeta /data y realiza un push a GitHub. Actions se encargará de vectorizarlos.
+
+Para Consultar (Chatbot): Ejecuta el dashboard localmente:
+
+Bash
+streamlit run app.py
+📄 Licencia
 Este proyecto es Open Source bajo la licencia MIT.
