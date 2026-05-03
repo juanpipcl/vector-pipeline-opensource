@@ -1,6 +1,8 @@
 import streamlit as st
 import os
+import logging
 from dotenv import load_dotenv
+
 
 load_dotenv()
 
@@ -10,6 +12,16 @@ from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.messages import HumanMessage, AIMessage
+
+
+
+# 1. Silenciar logs de nivel WARNING y menores para Transformers
+os.environ["TRANSFORMERS_VERBOSITY"] = "error"
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"  # Si usas algo de TensorFlow indirectamente
+
+# 2. Configuración de logging de Python para forzar el silencio
+logging.getLogger("transformers").setLevel(logging.ERROR)
+
 
 st.set_page_config(page_title="Data Bot Pro", page_icon="💬", layout="wide")
 
@@ -21,7 +33,7 @@ def init_resources():
     return vectorstore.as_retriever(search_kwargs={"k": 3})
 
 def main():
-    st.title("💬 Consultoría de Datos con Memoria")
+    st.title("💬 Chatbot para Análisis de Datos")
     
     if "chat_history" not in st.session_state:
         st.session_state.chat_history = []
@@ -30,13 +42,17 @@ def main():
         retriever = init_resources()
         llm = ChatGroq(model="llama-3.1-8b-instant", temperature=0)
 
-        # Prompt optimizado
         prompt = ChatPromptTemplate.from_messages([
-            ("system", "Eres un asistente experto. Responde basándote solo en este contexto:\n\n{context}"),
+            ("system", """Eres un asistente experto en análisis de datos. 
+            Tus funcionalidades incluyen:
+            1. Consultar documentos PDF específicos en la base de datos Pinecone.
+            2. Mantener el hilo de la conversación mediante memoria de sesión.
+            3. Proveer respuestas técnicas rápidas usando infraestructura Groq.
+            Responde basándote solo en este contexto: {context}"""),
             MessagesPlaceholder(variable_name="chat_history"),
             ("human", "{question}"),
         ])
-
+      
         # Mostrar mensajes previos
         for message in st.session_state.chat_history:
             role = "user" if isinstance(message, HumanMessage) else "assistant"
